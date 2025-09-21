@@ -14,6 +14,7 @@ import {
   Calendar,
   Clock
 } from "lucide-react"
+import { useState } from "react";
 
 export default function Contact() {
   const contactMethods = [
@@ -53,6 +54,54 @@ export default function Contact() {
     { day: "Sunday - Friday", time: "9:00 AM - 6:00 PM NPT", available: true },
     { day: "Saturday", time: "Emergency only", available: false },
   ]
+  // ...existing code...
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+    try {
+      const res = await fetch("https://ptb.discord.com/api/webhooks/1419231906507128842/kwoRg_YbtaEiNURyQlwfwqtp3S-JMvFOolQ_i42AwP8HbWDT5aqsRAupUEZoB5ML0vTj", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content:
+           
+            `**📩 New Contact Form Submission**\n\n` +
+            `**👤 Name:** ${form.name}\n` +
+            `**✉️ Email:** ${form.email}\n` +
+            `**📝 Subject:** ${form.subject}\n` +
+            `**💬 Message:**\n${form.message}`
+        })
+      });
+      if (res.ok) {
+        setSuccess(true);
+        setForm({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setError("Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      setError("Failed to send message. Please try again.");
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen p-6">
@@ -81,35 +130,40 @@ export default function Contact() {
                 <p className="text-muted-foreground">I'll get back to you within 24 hours</p>
               </div>
 
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Name</label>
-                    <Input placeholder="Your full name" className="bg-secondary/50" />
+                    <Input name="name" value={form.name} onChange={handleChange} placeholder="Your full name" className="bg-secondary/50" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Email</label>
-                    <Input type="email" placeholder="your.email@example.com" className="bg-secondary/50" />
+                    <Input name="email" type="email" value={form.email} onChange={handleChange} placeholder="your.email@example.com" className="bg-secondary/50" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Subject</label>
-                  <Input placeholder="Project inquiry, collaboration, etc." className="bg-secondary/50" />
+                  <Input name="subject" value={form.subject} onChange={handleChange} placeholder="Project inquiry, collaboration, etc." className="bg-secondary/50" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Message</label>
                   <Textarea 
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
                     placeholder="Tell me about your project, goals, and how I can help..."
                     className="bg-secondary/50 min-h-[120px]"
                   />
                 </div>
 
-                <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 glow-primary">
+                <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 glow-primary" type="submit" disabled={loading}>
                   <Send className="w-4 h-4 mr-2" />
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
+                {success && <div className="text-green-500 mt-2">Message sent successfully!</div>}
+                {error && <div className="text-red-500 mt-2">{error}</div>}
               </form>
             </Card>
           </div>
