@@ -61,7 +61,7 @@ export function HeroSection() {
             <div className="relative group">
               <div className="w-64 h-64 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-4 border-primary/30 overflow-hidden flex items-center justify-center hover-lift">
                 <img 
-                  src="https://media-del1-2.cdn.whatsapp.net/v/t61.24694-24/534427908_1159433162909198_8201980284244987362_n.jpg?ccb=11-4&oh=01_Q5Aa2QGa6pAf4xx7g22QFwTLmt3BA01MPZGaa-BIumQ3h3DiaA&oe=68C3EC31&_nc_sid=5e03e0&_nc_cat=104" 
+                  src="../../public/heroimage.png" 
                   alt="Nitish Baniya" 
                   className="w-full h-full rounded-full object-cover shadow-lg transition-transform duration-300 group-hover:scale-105"
                 />
